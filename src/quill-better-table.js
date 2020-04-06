@@ -73,8 +73,8 @@ class BetterTable extends Module {
 
     // handle right click on quill-better-table
     this.quill.root.addEventListener('contextmenu', (evt) => {
-      if (!this.table) return true
-      evt.preventDefault()
+      // hide existing table tools
+      if (this.table) this.hideTableTools()
 
       // bugfix: evt.path is undefined in Safari, FF, Micro Edge
       const path = getEventComposedPath(evt)
@@ -85,6 +85,13 @@ class BetterTable extends Module {
           node.tagName.toUpperCase() === 'TABLE' &&
           node.classList.contains('quill-better-table')
       })[0]
+
+      // user clicked something other than a better-table
+      if (!tableNode) return;
+
+      evt.preventDefault();
+
+      this.showTableTools(tableNode, quill, options)
 
       const rowNode = path.filter(node => {
         return node.tagName &&
